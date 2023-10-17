@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>FCM Client Side </title>
+</head>
+<body>
+         
+       <h1>FCM CLIENT SIDE </h1>
+       <button id="requestPermissionButton">Allow Notification</button>
+       
+	   <script type="module">
+   
+            if ("serviceWorker" in navigator) {
+                // Supported!
+                console.log("Supported");
+            }        
+
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+            import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging.js";
+
+		  // Your web app's Firebase configuration
+		  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		  const firebaseConfig = {
+			apiKey: "AIzaSyCKSVX3MpaQ0Y9g8vVcpJyx7PESnp4Uch4",
+			authDomain: "rails-cloud-messaging.firebaseapp.com",
+			projectId: "rails-cloud-messaging",
+			storageBucket: "rails-cloud-messaging.appspot.com",
+			messagingSenderId: "174335803816",
+			appId: "1:174335803816:web:f6cc0316a1b31e53e1dd9d",
+			measurementId: "G-DHVV6GH60N"
+		  };
+
+		  
+		   // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // Get a reference to the messaging service
+        const messaging = getMessaging(app);
+		  
+        const vapidKey = 'BPNO2sTmE8aExyoncYQJhxdWZf-LioUWpkNicFRNxa-NbUzYQDCiG4AXcbtNDQePRB0j1_OcVmueNHZ8ZwZI6LI'
+		  
+		const requestNotificationPermission = async () => {
+            try {
+                const permission = await Notification.requestPermission();
+
+                if (permission === "granted") {
+                    console.log("Notification permission granted.");
+                    // Get the FCM registration token
+                    const currentToken = await getToken(messaging,{ vapidKey });
+                    if (currentToken) {
+                        console.log("FCM registration token:", currentToken);
+                        // You can now send this token to your server for sending notifications.
+                    } else {
+                        console.warn("No FCM registration token available.");
+                    }
+                } else {
+                    console.warn("Notification permission denied.");
+                }
+            } catch (error) {
+                console.error("Error requesting permission or getting FCM token:", error);
+            }
+        };
+
+        document.getElementById("requestPermissionButton").addEventListener("click", requestNotificationPermission);
+	</script>
+</body>
+</html>
+
